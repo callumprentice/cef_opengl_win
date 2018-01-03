@@ -1,0 +1,40 @@
+<html>
+<head>
+  <style>
+    #output {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      font-size: 30px;
+      font-family: "Courier New"
+    }
+    #sel {
+      position: absolute;
+      left: 128px;
+      top: 64px;
+      font-size: 30px;
+      font-family: "Courier New"
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="output" placeholder="Select an option">
+  <p>
+  <select id="sel" onchange="display()">
+    <option value="value1">Value 1</option> 
+    <option value="value2">Value 2</option>
+    <option value="value3">Value 3</option>
+    <option value="value4">Value 4</option>
+    <option value="value5">Value 5</option>
+    <option value="value6">Value 6</option>
+    <option value="value7">Value 7</option>
+    <option value="value8">Value 8</option>
+    <option value="value9">Value 9</option>
+  </select>
+  <script>
+    function display() {
+      document.getElementById("output").value = document.getElementById("sel").value;
+    }
+  </script>
+</body>
+</html>

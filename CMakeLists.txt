@@ -138,6 +138,16 @@ if("${CMAKE_VERSION}" VERSION_GREATER 3.6.2)
 endif()
 
 ################################################################################
+# copy test HTML page over to a known location so we don't waste time on
+# code in the app trying to find it
+add_custom_command(
+    TARGET cef_opengl_win POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/select.html"
+            "$<TARGET_FILE_DIR:cef_opengl_win>/.."
+    COMMENT "Copying test HTML pages to executable directory")
+
+################################################################################
 # generic commands that have to go after everything else
 
 if(CMAKE_CONFIGURATION_TYPES)
