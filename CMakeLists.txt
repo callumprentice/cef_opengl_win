@@ -107,6 +107,11 @@ add_custom_command(
 add_executable(
     cef_opengl_win
     src/cef_opengl_win.cpp
+    tests/select.html
+)
+
+source_group(
+  "Tests" FILES tests/select.html
 )
 
 # define which include directories to pull in
@@ -139,17 +144,16 @@ endif()
 
 ################################################################################
 # copy test HTML page over to a known location so we don't waste time on
-# code in the app trying to find it
-add_custom_command(
-    TARGET cef_opengl_win POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy
-            "${CMAKE_CURRENT_SOURCE_DIR}/tests/select.html"
-            "$<TARGET_FILE_DIR:cef_opengl_win>/.."
-    COMMENT "Copying test HTML pages to executable directory")
+# code in the app trying to find it.  Using confiogure_file allows us to
+# copy the file each time so when someone changes it in Visual Studio, the 
+# file is copied over and loaded - no stale edits!
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests/select.html" 
+    "$<TARGET_FILE_DIR:cef_opengl_win>/.."
+    COPYONLY)
 
 ################################################################################
 # generic commands that have to go after everything else
-
 if(CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 endif()

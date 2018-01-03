@@ -44,7 +44,7 @@ unsigned char* gPagePixels = nullptr;
 unsigned char* gPopupPixels = nullptr;
 bool gExitFlag = false;
 
-// CodePen page with an HTML form SELECT test
+// starting URL - local file copied over from 'tests' directory via CMake custom command
 CefString gStartURL = "file:///select.html";
 
 /////////////////////////////////////////////////////////////////////////////////

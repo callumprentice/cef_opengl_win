@@ -1,19 +1,33 @@
 <html>
 <head>
   <style>
+    body {
+      margin:0;
+      padding:0;
+      background-color: #09a;
+    }
+    #info {
+      position: absolute;
+      left: 8px;
+      top: 0px;
+      width: 750px;
+      font-size: 20px;
+      font-family: "Courier New";
+      color: #ff0;
+    }
     #output {
       position: absolute;
       left: 8px;
-      top: 8px;
+      top: 96px;
       font-size: 30px;
-      font-family: "Courier New"
+      font-family: "Courier New";
     }
     #sel {
       position: absolute;
-      left: 128px;
-      top: 64px;
+      left: 96px;
+      top: 150px;
       font-size: 30px;
-      font-family: "Courier New"
+      font-family: "Courier New";
     }
   </style>
 </head>
@@ -31,6 +45,9 @@
     <option value="value8">Value 8</option>
     <option value="value9">Value 9</option>
   </select>
+  <p id="info">
+    Suggestion: edit cef_opengl_win/tests/select.html with Visual Studio and modify the CSS for the drop-down to make sure it works at sides and bottom too.
+  </p>
   <script>
     function display() {
       document.getElementById("output").value = document.getElementById("sel").value;
