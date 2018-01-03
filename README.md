@@ -20,8 +20,8 @@ Building libcef_dll_wrapper
 * `mkdir build` #important - use this name as it's referenced in the CMake file for the application
 * `cd build`
 * `cmake -G "Visual Studio 12 2013 Win64" ..`
-* `msbuild cef.sln /p:Configuration=Debug /p:Platform=x64`
-* `msbuild cef.sln /p:Configuration=Release /p:Platform=x64`
+* `msbuild cef.sln /t:libcef_dll_wrapper /p:Configuration=Debug /p:Platform=x64`
+* `msbuild cef.sln /t:libcef_dll_wrapper /p:Configuration=Release /p:Platform=x64`
 
 Building the cef_opengl_win application 
 ========================================
