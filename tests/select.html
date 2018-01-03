@@ -4,7 +4,7 @@
     body {
       margin:0;
       padding:0;
-      background-color: #09a;
+      background-color: #9a9;
     }
     #info {
       position: absolute;
@@ -19,6 +19,7 @@
       position: absolute;
       left: 8px;
       top: 96px;
+      width: 750px;
       font-size: 30px;
       font-family: "Courier New";
     }
@@ -32,7 +33,7 @@
   </style>
 </head>
 <body>
-  <input type="text" id="output" placeholder="Select an option">
+  <input type="text" id="output" placeholder="Select an option from drop down">
   <p>
   <select id="sel" onchange="display()">
     <option value="value1">Value 1</option> 
@@ -46,7 +47,7 @@
     <option value="value9">Value 9</option>
   </select>
   <p id="info">
-    Suggestion: edit cef_opengl_win/tests/select.html with Visual Studio and modify the CSS for the drop-down to make sure it works at sides and bottom too.
+    Suggestion: edit cef_opengl_win/tests/select.html (you can use Visual Studio Solution Explorer) and modify the CSS for the drop-down position to make sure it works at sides and bottom too.
   </p>
   <script>
     function display() {
