@@ -245,10 +245,10 @@ class cefImpl :
     public:
         bool cefImpl::init()
         {
-            CefSettings settings;
 
             CefMainArgs args(GetModuleHandle(NULL));
-            CefString(&settings.browser_subprocess_path) = "cef_opengl_win_host.exe";
+
+            CefSettings settings;
             settings.multi_threaded_message_loop = false;
 
             if (CefInitialize(args, settings, this, NULL))
@@ -443,6 +443,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 //
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+    CefEnableHighDPISupport();
+
+    // this will fire off requests to broweser, render, GPU processes etc.
+    CefMainArgs main_args(hInstance);
+    int exit_code = CefExecuteProcess(main_args, NULL, nullptr);
+    if (exit_code >= 0)
+    {
+        return exit_code;
+    }
+
     AllocConsole();
     FILE* outputConsole;
     freopen_s(&outputConsole, "CON", "w", stdout);

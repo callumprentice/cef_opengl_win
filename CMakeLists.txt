@@ -58,49 +58,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -W3 /MTd")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -W3 /MT")
 
 ################################################################################
-## cef_opengl_win_host executable
-
-# add source files to the application
-add_executable(
-    cef_opengl_win_host
-    src/cef_opengl_win_host.cpp
-)
-
-# define which include directories to pull in
-target_include_directories(
-    cef_opengl_win_host
-    PUBLIC
-    ${CEF_INCLUDE_DIR}
-    ${CEF_INCLUDE_DIR}/..
-)
-
-# define which libs to link against
-target_link_libraries(
-    cef_opengl_win_host
-    ${CEF_LIBRARY}
-    ${CEF_DLL_LIBRARY}
-)
-
-# we are building Windows executable, not a console app (default)
-set_target_properties(cef_opengl_win_host PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
-set_target_properties(cef_opengl_win_host PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-
-# Visual Studio batch commands to copy CEF runtime files along side executable
-add_custom_command(
-    TARGET cef_opengl_win_host POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy_directory
-            "${CEF_BUILD_DIR}/$<CONFIGURATION>"
-            "$<TARGET_FILE_DIR:cef_opengl_win_host>"
-    COMMENT "Copying runtime files to executable directory")
-
-add_custom_command(
-    TARGET cef_opengl_win_host POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy_directory
-            "${CEF_RESOURCES_DIR}"
-            "$<TARGET_FILE_DIR:cef_opengl_win_host>"
-    COMMENT "Copying resource files to executable directory")
-
-################################################################################
 ## cef_opengl_win executable
 
 # add source file to the application
@@ -134,8 +91,20 @@ target_link_libraries(
 set_target_properties(cef_opengl_win PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
 set_target_properties(cef_opengl_win PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
 
-# cef_minimal example dependes on host executable
-add_dependencies(cef_opengl_win cef_opengl_win_host)
+# Visual Studio batch commands to copy CEF runtime files along side executable
+add_custom_command(
+    TARGET cef_opengl_win POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory
+            "${CEF_BUILD_DIR}/$<CONFIGURATION>"
+            "$<TARGET_FILE_DIR:cef_opengl_win>"
+    COMMENT "Copying runtime files to executable directory")
+
+add_custom_command(
+    TARGET cef_opengl_win POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory
+            "${CEF_RESOURCES_DIR}"
+            "$<TARGET_FILE_DIR:cef_opengl_win>"
+    COMMENT "Copying resource files to executable directory")
 
 # set the test application as the default startup project in Visual Studio
 if("${CMAKE_VERSION}" VERSION_GREATER 3.6.2)
