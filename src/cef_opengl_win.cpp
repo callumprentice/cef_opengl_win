@@ -44,8 +44,7 @@ unsigned char* gPagePixels = nullptr;
 unsigned char* gPopupPixels = nullptr;
 bool gExitFlag = false;
 
-// starting URL - local file copied over from 'tests' directory via CMake custom command
-CefString gStartURL = "file:///select.html";
+CefString gStartURL = "https://callum-linden.s3.amazonaws.com/dullahan_test_urls/index.html";
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -68,13 +67,10 @@ class RenderHandler :
             // whole page was updated
             if (type == PET_VIEW)
             {
-                std::cout << "OnPaint() for page: " << width << " x " << height << std::endl;
-
                 // make a buffer for whole page if not there already and copy in pixels
                 if (gPagePixels == nullptr)
                 {
                     gPagePixels = new unsigned char[width * height * gDepth];
-                    memset(gPagePixels, 0, width * height * gDepth);
                 }
                 memcpy(gPagePixels, buffer, width * height * gDepth);
 
@@ -141,7 +137,6 @@ class RenderHandler :
             if (gPopupPixels == nullptr)
             {
                 gPopupPixels = new unsigned char[rect.width * rect.height * gDepth];
-                memset(gPopupPixels, 0, rect.width * rect.height * gDepth);
             }
         }
 
@@ -250,6 +245,9 @@ class cefImpl :
 
             CefSettings settings;
             settings.multi_threaded_message_loop = false;
+            settings.background_color = 0xff0000ff;
+
+            CefString(&settings.cache_path) = "cef_opengl_win_cache";
 
             if (CefInitialize(args, settings, this, NULL))
             {
@@ -264,7 +262,6 @@ class cefImpl :
 
                 CefBrowserSettings browser_settings;
                 browser_settings.windowless_frame_rate = 60;
-                browser_settings.background_color = 0xffffffff;
 
                 mBrowser = CefBrowserHost::CreateBrowserSync(window_info, mBrowserClient.get(), gStartURL, browser_settings, nullptr);
 
@@ -319,6 +316,80 @@ class cefImpl :
             }
         }
 
+        void setCookie()
+        {
+            CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager(nullptr);
+            if (manager)
+            {
+                CefCookie cookie;
+                CefString(&cookie.name) = "Hobnob";
+                CefString(&cookie.value) = "chocolate";
+                CefString(&cookie.domain) = "id.callum.com";
+                CefString(&cookie.path) = "/";
+
+                // TODO set from input
+                cookie.httponly = true;
+                cookie.secure = true;
+                cookie.has_expires = true;
+                cookie.expires.year = 2064;
+                cookie.expires.month = 4;
+                cookie.expires.day_of_week = 5;
+                cookie.expires.day_of_month = 10;
+
+                const CefRefPtr<CefSetCookieCallback> set_cookie_callback = nullptr;
+                std::string url = "https://id.callum.com";
+                bool result = manager->SetCookie(url, cookie, set_cookie_callback);
+
+                const CefRefPtr<CefCompletionCallback> flush_store_callback = nullptr;
+                manager->FlushStore(flush_store_callback);
+            }
+        }
+
+        void deleteAllCookies()
+        {
+            CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager(nullptr);
+            if (manager)
+            {
+                // empty URL deletes all cookies for all domains
+                const CefString url("");
+                const CefString name("");
+                const CefRefPtr<CefDeleteCookiesCallback> callback = nullptr;
+                manager->DeleteCookies(url, name, callback);
+            }
+        }
+
+        class TestVisitor : public CefCookieVisitor
+        {
+            public:
+                TestVisitor(std::vector<CefCookie>* cookies)
+                    : cookies_(cookies)
+                {
+                }
+
+                bool Visit(const CefCookie& cookie, int count, int total, bool& deleteCookie) override
+                {
+                    std::cout << "Visiting all cookies - name is " << "mame" << std::endl;
+                    deleteCookie = true;
+                    return true;
+                }
+
+                std::vector<CefCookie>* cookies_;
+
+                IMPLEMENT_REFCOUNTING(TestVisitor);
+        };
+
+        void visitAllCookies()
+        {
+            std::vector<CefCookie> cookies;
+
+            CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager(nullptr);
+            if (manager)
+            {
+                manager->VisitAllCookies(new TestVisitor(&cookies));
+                manager->FlushStore(nullptr);
+            }
+        }
+
         void requestExit()
         {
             if (mBrowser.get() && mBrowser->GetHost())
@@ -329,9 +400,9 @@ class cefImpl :
 
         void shutdown()
         {
-            mRenderHandler = NULL;
-            mBrowserClient = NULL;
-            mBrowser = NULL;
+            mRenderHandler = nullptr;
+            mBrowserClient = nullptr;
+            mBrowser = nullptr;
 
             CefShutdown();
         }
@@ -417,9 +488,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_KEYDOWN:
         {
+            std::cout << "wParam is " << wParam << std::endl;
             if (wParam == 27)
             {
                 SendMessage(hWnd, WM_CLOSE, 0, 0);
+            }
+            else if (wParam == 67)
+            {
+                gCefImpl->setCookie();
+            }
+            else if (wParam == 68)
+            {
+                gCefImpl->deleteAllCookies();
             }
         }
         break;
