@@ -44,7 +44,7 @@ unsigned char* gPagePixels = nullptr;
 unsigned char* gPopupPixels = nullptr;
 bool gExitFlag = false;
 
-CefString gStartURL = "https://callum-linden.s3.amazonaws.com/dullahan_test_urls/index.html";
+CefString gStartURL = "https://sl-viewer-media-system.s3.amazonaws.com/index.html";
 
 /////////////////////////////////////////////////////////////////////////////////
 //
