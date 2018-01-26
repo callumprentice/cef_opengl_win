@@ -37,7 +37,7 @@
 HGLRC hRC = 0;
 HDC hDC = 0;
 GLuint gWidth = 800;
-GLuint gHeight = 800;
+GLuint gHeight = 1200;
 GLuint gDepth = 4;
 CefRect gPopupRect;
 unsigned char* gPagePixels = nullptr;

@@ -64,11 +64,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -W3 /MT")
 add_executable(
     cef_opengl_win
     src/cef_opengl_win.cpp
-    tests/select.html
-)
-
-source_group(
-  "Tests" FILES tests/select.html
 )
 
 # define which include directories to pull in
@@ -110,16 +105,6 @@ add_custom_command(
 if("${CMAKE_VERSION}" VERSION_GREATER 3.6.2)
     set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "cef_opengl_win")
 endif()
-
-################################################################################
-# copy test HTML page over to a known location so we don't waste time on
-# code in the app trying to find it.  Using confiogure_file allows us to
-# copy the file each time so when someone changes it in Visual Studio, the 
-# file is copied over and loaded - no stale edits!
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/tests/select.html" 
-    "$<TARGET_FILE_DIR:cef_opengl_win>/.."
-    COPYONLY)
 
 ################################################################################
 # generic commands that have to go after everything else
