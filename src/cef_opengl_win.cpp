@@ -44,7 +44,7 @@ unsigned char* gPagePixels = nullptr;
 unsigned char* gPopupPixels = nullptr;
 bool gExitFlag = false;
 
-CefString gStartURL = "https://sl-viewer-media-system.s3.amazonaws.com/index.html";
+CefString gStartURL = "http://community.secondlife.com/t5/Featured-News/bg-p/blog_feature_news";
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -165,6 +165,18 @@ class BrowserClient :
         {
             return this;
         }
+
+        bool OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
+                           const CefString& target_url, const CefString& target_frame_name,
+                           CefLifeSpanHandler::WindowOpenDisposition target_disposition,
+                           bool user_gesture, const CefPopupFeatures& popupFeatures,
+                           CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client,
+                           CefBrowserSettings& settings, bool* no_javascript_access)
+        {
+            std::cout << "Page wants to open a popup" << std::endl;
+
+            return true;
+        };
 
         void OnAfterCreated(CefRefPtr<CefBrowser> browser) override
         {
@@ -313,6 +325,14 @@ class cefImpl :
 
                 bool mouse_leave = false;
                 mBrowser->GetHost()->SendMouseMoveEvent(cef_mouse_event, mouse_leave);
+            }
+        }
+
+        void navigate(const std::string url)
+        {
+            if (mBrowser && mBrowser->GetHost())
+            {
+                mBrowser->GetMainFrame()->LoadURL(url);
             }
         }
 
@@ -483,6 +503,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int y = GET_Y_LPARAM(lParam);
             bool up = true;
             gCefImpl->mouseButton(x, y, up);
+        }
+        break;
+
+        case WM_RBUTTONDOWN:
+        {
+            gCefImpl->navigate("https://callum-linden.s3.amazonaws.com/bigclick.html");
         }
         break;
 
