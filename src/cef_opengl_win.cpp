@@ -173,7 +173,9 @@ class BrowserClient :
                            CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client,
                            CefBrowserSettings& settings, bool* no_javascript_access)
         {
-            std::cout << "Page wants to open a popup" << std::endl;
+			CEF_REQUIRE_UI_THREAD();
+
+			std::cout << "Page wants to open a popup" << std::endl;
 
             return true;
         };
