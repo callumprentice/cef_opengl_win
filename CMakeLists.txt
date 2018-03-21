@@ -82,10 +82,12 @@ target_link_libraries(
     OpenGL32
 )
 
+################################################################################
 # we are building Windows executable, not a console app (default)
 set_target_properties(cef_opengl_win PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
 set_target_properties(cef_opengl_win PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
 
+################################################################################
 # Visual Studio batch commands to copy CEF runtime files along side executable
 add_custom_command(
     TARGET cef_opengl_win POST_BUILD
@@ -105,6 +107,14 @@ add_custom_command(
 if("${CMAKE_VERSION}" VERSION_GREATER 3.6.2)
     set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "cef_opengl_win")
 endif()
+
+################################################################################
+# debug version needs a manifest file that allows retrieval of the Windows
+# version number - otherwise the app in Debug configurations fails to start
+add_custom_command(
+    TARGET cef_opengl_win POST_BUILD
+    COMMAND "mt.exe" -manifest \"$(ProjectDir)..\\src\\compatibility.manifest\" -outputresource:"$(TargetDir)$(TargetFileName)"\;\#1
+    COMMENT "Adding custom manifest...")
 
 ################################################################################
 # generic commands that have to go after everything else

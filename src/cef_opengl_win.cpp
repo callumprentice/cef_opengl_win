@@ -44,7 +44,7 @@ unsigned char* gPagePixels = nullptr;
 unsigned char* gPopupPixels = nullptr;
 bool gExitFlag = false;
 
-CefString gStartURL = "http://community.secondlife.com/t5/Featured-News/bg-p/blog_feature_news";
+CefString gStartURL = "http://news.google.com";
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -143,39 +143,20 @@ class RenderHandler :
         IMPLEMENT_REFCOUNTING(RenderHandler);
 };
 
-/////////////////////////////////////////////////////////////////////////////////
-//
-class BrowserClient :
-    public CefClient,
-    public CefLifeSpanHandler,
-    public CefLoadHandler
+class LifeSpanHandler :
+    public CefLifeSpanHandler
 {
     public:
-        BrowserClient(RenderHandler* render_handler) :
-            mRenderHandler(render_handler)
-        {
-        }
-
-        CefRefPtr<CefRenderHandler> GetRenderHandler() override
-        {
-            return mRenderHandler;
-        }
-
-        CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override
-        {
-            return this;
-        }
-
         bool OnBeforePopup(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
                            const CefString& target_url, const CefString& target_frame_name,
                            CefLifeSpanHandler::WindowOpenDisposition target_disposition,
                            bool user_gesture, const CefPopupFeatures& popupFeatures,
                            CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client,
-                           CefBrowserSettings& settings, bool* no_javascript_access)
+                           CefBrowserSettings& settings, bool* no_javascript_access) override
         {
-			CEF_REQUIRE_UI_THREAD();
+            CEF_REQUIRE_UI_THREAD();
 
-			std::cout << "Page wants to open a popup" << std::endl;
+            std::cout << "Page wants to open a popup" << std::endl;
 
             return true;
         };
@@ -205,6 +186,68 @@ class BrowserClient :
             {
                 gExitFlag = true;
             }
+        }
+
+        IMPLEMENT_REFCOUNTING(LifeSpanHandler);
+
+    private:
+        typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
+        BrowserList mBrowserList;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+//
+class BrowserClient :
+    public CefClient,
+    public CefRequestHandler,
+    public CefLoadHandler
+{
+    public:
+        BrowserClient(RenderHandler* render_handler) :
+            mRenderHandler(render_handler)
+        {
+            mLifeSpanHandler = new LifeSpanHandler;
+        }
+
+        CefRefPtr<CefRenderHandler> GetRenderHandler() override
+        {
+            return mRenderHandler;
+        }
+
+        CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override
+        {
+            return mLifeSpanHandler;
+        }
+
+        CefRefPtr<CefRequestHandler> GetRequestHandler() override
+        {
+            return this;
+        }
+
+        bool OnOpenURLFromTab(CefRefPtr<CefBrowser> browser,
+                              CefRefPtr<CefFrame> frame,
+                              const CefString& target_url,
+                              CefRequestHandler::WindowOpenDisposition target_disposition,
+                              bool user_gesture) override
+        {
+            std::cout << "OnOpenURLFromTab is called" << std::endl;
+
+            return true;
+        }
+
+        bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
+                            CefRefPtr<CefFrame> frame,
+                            CefRefPtr<CefRequest> request,
+                            bool is_redirect) override
+        {
+            std::string frame_name = frame->GetName();
+            std::string frame_url = frame->GetURL();
+
+            std::cout << "OnBeforeBrowse  is called: " << std::endl;
+            std::cout << "                  Name is: " << frame_name << std::endl;
+            std::cout << "                   URL is: " << frame_url << std::endl;
+
+            return false;
         }
 
         CefRefPtr<CefLoadHandler> GetLoadHandler() override
@@ -242,8 +285,7 @@ class BrowserClient :
 
     private:
         CefRefPtr<CefRenderHandler> mRenderHandler;
-        typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
-        BrowserList mBrowserList;
+        CefRefPtr<CefLifeSpanHandler> mLifeSpanHandler;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -261,7 +303,8 @@ class cefImpl :
             settings.multi_threaded_message_loop = false;
             settings.background_color = 0xff0000ff;
 
-            CefString(&settings.cache_path) = "cef_opengl_win_cache";
+            CefString(&settings.log_file) = "cef_opengl_win.log";
+            settings.log_severity = LOGSEVERITY_DEFAULT;
 
             if (CefInitialize(args, settings, this, NULL))
             {
