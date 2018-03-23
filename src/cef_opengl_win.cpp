@@ -44,7 +44,7 @@ unsigned char* gPagePixels = nullptr;
 unsigned char* gPopupPixels = nullptr;
 bool gExitFlag = false;
 
-CefString gStartURL = "http://news.google.com";
+CefString gStartURL = "https://sl-viewer-media-system.s3-us-west-2.amazonaws.com/index.html";
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -156,7 +156,7 @@ class LifeSpanHandler :
         {
             CEF_REQUIRE_UI_THREAD();
 
-            std::cout << "Page wants to open a popup" << std::endl;
+			std::cout << "Page wants to open a popup: " << std::string(target_url) << std::endl;
 
             return true;
         };
@@ -301,7 +301,6 @@ class cefImpl :
 
             CefSettings settings;
             settings.multi_threaded_message_loop = false;
-            settings.background_color = 0xff0000ff;
 
             CefString(&settings.log_file) = "cef_opengl_win.log";
             settings.log_severity = LOGSEVERITY_DEFAULT;
@@ -319,6 +318,7 @@ class cefImpl :
 
                 CefBrowserSettings browser_settings;
                 browser_settings.windowless_frame_rate = 60;
+				browser_settings.background_color = 0xffff0000;
 
                 mBrowser = CefBrowserHost::CreateBrowserSync(window_info, mBrowserClient.get(), gStartURL, browser_settings, nullptr);
 
