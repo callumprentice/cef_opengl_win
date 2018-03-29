@@ -46,6 +46,7 @@ bool gExitFlag = false;
 
 const int gNumBrowsers = 1;
 CefString gStartURL = "https://sl-viewer-media-system.s3-us-west-2.amazonaws.com/index.html";
+//CefString gStartURL = "http://community.secondlife.com/t5/Featured-News/bg-p/blog_feature_news";
 
 /////////////////////////////////////////////////////////////////////////////////
 //
