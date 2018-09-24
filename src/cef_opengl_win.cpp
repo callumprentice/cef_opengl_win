@@ -158,7 +158,7 @@ class LifeSpanHandler :
         {
             CEF_REQUIRE_UI_THREAD();
 
-			std::cout << "Page wants to open a popup: " << std::string(target_url) << std::endl;
+            std::cout << "Page wants to open a popup: " << std::string(target_url) << std::endl;
 
             return true;
         };
@@ -240,7 +240,9 @@ class BrowserClient :
         bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
                             CefRefPtr<CefFrame> frame,
                             CefRefPtr<CefRequest> request,
+                            bool user_gesture,
                             bool is_redirect) override
+
         {
             std::string frame_name = frame->GetName();
             std::string frame_url = frame->GetURL();
@@ -311,21 +313,21 @@ class cefImpl :
             {
                 std::cout << "cefImpl: initialized okay" << std::endl;
 
-				for (int i = 0; i < gNumBrowsers; ++i)
-				{
-					mRenderHandler[i] = new RenderHandler();
+                for (int i = 0; i < gNumBrowsers; ++i)
+                {
+                    mRenderHandler[i] = new RenderHandler();
 
-					mBrowserClient[i] = new BrowserClient(mRenderHandler[i]);
+                    mBrowserClient[i] = new BrowserClient(mRenderHandler[i]);
 
-					CefWindowInfo window_info;
-					window_info.windowless_rendering_enabled = true;
+                    CefWindowInfo window_info;
+                    window_info.windowless_rendering_enabled = true;
 
-					CefBrowserSettings browser_settings;
-					browser_settings.windowless_frame_rate = 60;
-					browser_settings.background_color = 0xffff0000;
+                    CefBrowserSettings browser_settings;
+                    browser_settings.windowless_frame_rate = 60;
+                    browser_settings.background_color = 0xffff0000;
 
-					mBrowser[i] = CefBrowserHost::CreateBrowserSync(window_info, mBrowserClient[i].get(), gStartURL, browser_settings, nullptr);
-				}
+                    mBrowser[i] = CefBrowserHost::CreateBrowserSync(window_info, mBrowserClient[i].get(), gStartURL, browser_settings, nullptr);
+                }
 
                 return true;
             }
@@ -352,7 +354,7 @@ class cefImpl :
         {
             if (mBrowser[0] && mBrowser[0]->GetHost())
             {
-				mBrowser[0]->GetHost()->SendFocusEvent(true);
+                mBrowser[0]->GetHost()->SendFocusEvent(true);
 
                 CefMouseEvent cef_mouse_event;
                 cef_mouse_event.x = x;
@@ -361,28 +363,28 @@ class cefImpl :
                 CefBrowserHost::MouseButtonType btn_type = MBT_LEFT;
                 int last_click_count = 1;
 
-				mBrowser[0]->GetHost()->SendMouseClickEvent(cef_mouse_event, btn_type, is_up, last_click_count);
+                mBrowser[0]->GetHost()->SendMouseClickEvent(cef_mouse_event, btn_type, is_up, last_click_count);
             }
         }
 
         void mouseMove(int x, int y)
         {
-			if (mBrowser[0] && mBrowser[0]->GetHost())
+            if (mBrowser[0] && mBrowser[0]->GetHost())
             {
                 CefMouseEvent cef_mouse_event;
                 cef_mouse_event.x = x;
                 cef_mouse_event.y = y;
 
                 bool mouse_leave = false;
-				mBrowser[0]->GetHost()->SendMouseMoveEvent(cef_mouse_event, mouse_leave);
+                mBrowser[0]->GetHost()->SendMouseMoveEvent(cef_mouse_event, mouse_leave);
             }
         }
 
         void navigate(const std::string url)
         {
-			if (mBrowser[0] && mBrowser[0]->GetHost())
+            if (mBrowser[0] && mBrowser[0]->GetHost())
             {
-				mBrowser[0]->GetMainFrame()->LoadURL(url);
+                mBrowser[0]->GetMainFrame()->LoadURL(url);
             }
         }
 
@@ -462,25 +464,25 @@ class cefImpl :
 
         void requestExit()
         {
-			for (int i = 0; i < gNumBrowsers; ++i)
-			{
-				if (mBrowser[i].get() && mBrowser[i]->GetHost())
-				{
-					mBrowser[i]->GetHost()->CloseBrowser(true);
-				}
-			}
-		}
+            for (int i = 0; i < gNumBrowsers; ++i)
+            {
+                if (mBrowser[i].get() && mBrowser[i]->GetHost())
+                {
+                    mBrowser[i]->GetHost()->CloseBrowser(true);
+                }
+            }
+        }
 
         void shutdown()
         {
-			for (int i = 0; i < gNumBrowsers; ++i)
-			{
-				mRenderHandler[i] = nullptr;
-				mBrowserClient[i] = nullptr;
-				mBrowser[i] = nullptr;
-			}
+            for (int i = 0; i < gNumBrowsers; ++i)
+            {
+                mRenderHandler[i] = nullptr;
+                mBrowserClient[i] = nullptr;
+                mBrowser[i] = nullptr;
+            }
 
-			gPagePixels = nullptr;
+            gPagePixels = nullptr;
 
             CefShutdown();
         }
@@ -489,8 +491,8 @@ class cefImpl :
 
     private:
         CefRefPtr<RenderHandler> mRenderHandler[gNumBrowsers];
-		CefRefPtr<BrowserClient> mBrowserClient[gNumBrowsers];
-		CefRefPtr<CefBrowser> mBrowser[gNumBrowsers];
+        CefRefPtr<BrowserClient> mBrowserClient[gNumBrowsers];
+        CefRefPtr<CefBrowser> mBrowser[gNumBrowsers];
 };
 
 cefImpl* gCefImpl = nullptr;

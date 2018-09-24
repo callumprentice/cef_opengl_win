@@ -29,7 +29,7 @@ Building the cef_opengl_win application
 * change to directory where this file is located
 * `mkdir build`
 * `cd build`
-* `cmake -G "Visual Studio 12 2013 Win64" -DCEF_BUILD_DIR="C:\work\cef_builds\cef_binary_3.3325.1750.gaabe4c4_windows64" ..`
+* `cmake -G "Visual Studio 12 2013 Win64" -DCEF_BUILD_DIR="C:\work\cef_builds\cef_binary_3.3497.1833.g13f506f_windows64" ..`
   (replacing the directory name with the CEF directory you just built)
 * `start cef_opengl_win.sln`
 * If you have a recent (>3.4.3) version of CMake, the cef_opengl_win project is already selected as the Startup Project. If not, select it manually yourself
