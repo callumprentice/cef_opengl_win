@@ -1,6 +1,6 @@
 Description:
 ============
-A simple example for Windows that uses the Chroimium Embedded Framework (CEF) (https://bitbucket.org/chromiumembedded/cef) directly to render web content to an OpenGL buffer and display it. This example is very rudimentary and designed as a place to test ideas and explore blocking issues.
+A simple example for Windows that uses the Chromium Embedded Framework (CEF) (https://bitbucket.org/chromiumembedded/cef) directly to render web content to an OpenGL buffer and display it. This example is very rudimentary and designed as a place to test ideas and explore blocking issues.
 
 For a more complex implementation including a standalone wrapper for CEF as well as more interesting examples, you might want to check out a project called Dullahan (https://bitbucket.org/lindenlab/dullahan)
 
@@ -8,7 +8,7 @@ Prerequisites:
 ==============
 * Visual Studio 12 2013 Update 5
 * CMake 3.1 or later (3.4.3 or later is better)
-* A tool to uncompreess .bz2 files like 7-Zip via http://www.7-zip.org/download.html
+* A tool to uncompress .bz2 files like 7-Zip via http://www.7-zip.org/download.html
 
 Building libcef_dll_wrapper
 ============================
